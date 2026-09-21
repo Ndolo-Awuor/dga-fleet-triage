@@ -131,15 +131,28 @@ def pair_slopes(t, x, seg, idx, min_dt=0.7):
     return out
 
 
-def rates_for_unit(e, xc, now, window, rng=None):
-    """Common robust slope per gas over the window using only within-segment pairs, plus a residual-based standard error."""
+def rates_for_unit(e, xc, now, window, rng=None, repeat=0.05, rho=0.08):
+    """Robust slope per gas over the window from within-segment pairs, with a standard error that never falls below
+    the lab repeatability (about 5 % of the level plus a small absolute floor). If a degassing leaves too few samples
+    for a slope, use the accumulated level: rate = (level - retained fraction of the pre-degassing level) / time since."""
     seg = segment_ids(e["t"], e["ev"])
+    ng = len(GASES)
     for w in (window, 5.0):
         idx = np.where(e["t"] >= now - w)[0]
         sl = pair_slopes(e["t"], xc, seg, idx)
         if len(sl[0]) >= 3:
             break
-    ng = len(GASES)
+    if len(sl[0]) < 3:
+        degs = [te for te, k, _ in e["ev"] if k == "degassing" and te < now]
+        if degs:
+            te = max(degs)
+            after = np.where(e["t"] > te)[0]; before = np.where(e["t"] <= te)[0]
+            if len(after) and len(before):
+                dtm = max(e["t"][after[-1]] - te, 0.25)
+                x_last = xc[after[-1]]; x_prev = xc[before[-1]]
+                rates = np.maximum((x_last - rho * x_prev) / dtm, 0.0)
+                se = (repeat * np.maximum(x_last, 1) + np.array([1.5, 1.5, 1.5, 1.5, 0.4, 1.5, 1.5])) / dtm
+                return rates, se
     if len(sl[0]) < 1:
         return np.zeros(ng), np.full(ng, np.inf)
     rates = np.array([np.median(x) if x else 0.0 for x in sl])
@@ -159,11 +172,17 @@ def rates_for_unit(e, xc, now, window, rng=None):
                 resid.extend(xs - rates[g] * ts - off)
             resid = np.array(resid)
             sigma = 1.4826 * np.median(np.abs(resid - np.median(resid))) if len(resid) > 2 else np.inf
-            se[g] = max(sigma, 0.3) / np.sqrt(sxx)
+            floor = repeat * float(np.median(xc[idx][:, g])) + (0.3 if g == 4 else 1.0)
+            se[g] = max(sigma, floor, 0.3) / np.sqrt(sxx)
     return rates, se
 
 
-def classify(rates, se, floor=12.0, k=3.0):
+K_SIG, FLOOR = 4.0, 16.0
+
+
+def classify(rates, se, floor=None, k=None):
+    floor = FLOOR if floor is None else floor
+    k = K_SIG if k is None else k
     rate_sum = float(np.sum(rates[:5])); c2 = float(rates[4])
     se_sum = float(np.sqrt(np.sum(np.square(se[:5])))) if np.all(np.isfinite(se[:5])) else np.inf
     acetylene = c2 > 0.7 and c2 > k * se[4]
@@ -179,17 +198,84 @@ def classify(rates, se, floor=12.0, k=3.0):
     return {"condition": cond, "action": action_from_rates(rate_sum, c2)}, rate_sum, c2
 
 
-def solve_a(fleet, window=3.0, seed=0):
-    units = parse(fleet)
-    now = max(e["t"].max() for e in units.values())
-    steps = detect_steps(units)
-    f = step_factors(units, steps)
-    out = {}
+def refine_unit_dates(units, D_reg, s_hat, span=0.9, step=0.05, gain=0.25, w0=2021.8):
+    """Given the shared step size, let each unit take its own step date when that clearly lowers its residual."""
+    dates = {}
+    for u, e in units.items():
+        d0 = D_reg.get(e["region"])
+        dates[u] = d0
+        if d0 is None or any(te >= w0 - 0.2 for te, _, _ in e["ev"]):
+            continue
+        m = e["t"] >= w0
+        if m.sum() < 6:
+            continue
+        t = e["t"][m]
+        ys = [np.log(e["x"][m, g]) for g in (0, 1, 2, 5) if np.median(e["x"][m, g]) >= 20 and not np.any(e["x"][m, g] < 3)]
+        if not ys:
+            continue
+
+        def rss(d):
+            stp = (t < d).astype(float)
+            if stp.sum() < 1 or (1 - stp).sum() < 1:
+                return np.inf
+            M = np.column_stack([np.ones_like(t), t - d])
+            return sum(float(np.sum(_resid(M, y - s_hat * stp) ** 2)) for y in ys)
+        base = rss(d0)
+        best = min(((rss(d), d) for d in np.arange(d0 - span, d0 + span + 1e-9, step)), key=lambda z: z[0])
+        if np.isfinite(base) and best[0] < (1 - gain) * base:
+            dates[u] = best[1]
+    return dates
+
+
+def screen_outliers(units, dates, f):
+    """Drop samples where every gas (including the very stable CO2) is low by a common factor relative to the
+    neighbouring samples of the same segment: a sampling error, not a trend."""
+    keep = {}
     for u, e in units.items():
         xc = e["x"].copy()
-        tc = steps.get(e["region"])
-        if tc is not None:
-            xc[e["t"] < tc] *= f
+        d = dates.get(u)
+        if d is not None:
+            xc[e["t"] < d] *= f
+        seg = segment_ids(e["t"], e["ev"])
+        ok = np.ones(len(e["t"]), bool)
+        for i in range(len(e["t"])):
+            nb = [j for j in range(max(0, i - 2), min(len(e["t"]), i + 3)) if j != i and seg[j] == seg[i]]
+            if len(nb) < 2:
+                continue
+            med = np.median(xc[nb], axis=0)
+            if med[5] < 50 or med[6] < 500:
+                continue
+            r_co, r_co2 = xc[i, 5] / med[5], xc[i, 6] / med[6]
+            if r_co < 0.78 and r_co2 < 0.78:              # CO and CO2 both low: gas lost at the sampling visit
+                ok[i] = False
+        keep[u] = ok
+    return keep
+
+
+def D_units(units, D):
+    return [(u, D.get(e['region'])) for u, e in units.items()]
+
+
+def solve_a(fleet, window=3.0, seed=0, refine=True, screen=True, correct=True):
+    units = parse(fleet)
+    now = max(e["t"].max() for e in units.values())
+    D, s_hat = fit_steps_joint(units)
+    dates = refine_unit_dates(units, D, s_hat) if refine else dict(D_units(units, D))
+    keep = screen_outliers(units, dates, np.exp(-s_hat)) if screen else {u: np.ones(len(e['t']), bool) for u, e in units.items()}
+    clean = {}
+    for u, e in units.items():
+        k = keep[u]
+        e2 = dict(e); e2["t"] = e["t"][k]; e2["x"] = e["x"][k]; e2["lab"] = e["lab"][k]
+        clean[u] = e2
+    D, s_hat = fit_steps_joint(clean)
+    dates = refine_unit_dates(clean, D, s_hat) if refine else dict(D_units(clean, D))
+    f = np.exp(-s_hat) if correct else 1.0
+    out = {}
+    for u, e in clean.items():
+        xc = e["x"].copy()
+        d = dates.get(u)
+        if d is not None:
+            xc[e["t"] < d] *= f
         rates, se = rates_for_unit(e, xc, now, window)
         out[u], _, _ = classify(rates, se)
     return out

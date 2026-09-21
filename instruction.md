@@ -1,0 +1,32 @@
+<!--
+DRAFT OF THE FACTS ONLY. Rewrite this in your own words before submission (the platform screens
+instruction.md for AI-generated text), and keep it plain and direct: the last review failed this file for
+narrative and roleplay wording. Keep every fact accurate. Do NOT add hints about how to solve it. Delete this
+comment block before submitting.
+-->
+
+# Transformer fleet diagnosis
+
+## Context
+
+Multi-year dissolved-gas records for a fleet of 24 oil-filled transformers. Some units have a developing fault. The laboratory changed during the record, and there were oil top-ups and degassings.
+
+## Inputs
+
+`/app/data/samples.csv`, `/app/data/units.csv`, `/app/data/events.csv` - the records.
+
+`/app/data/README.txt` - the file definitions, the conventions to follow, the allowed values, and the action rule.
+
+## Deliverable
+
+`/app/diagnosis.json` - a condition and an action for each of the 24 units:
+
+```
+{"T01": {"condition": "...", "action": "..."}, "T02": {"condition": "...", "action": "..."}}
+```
+
+## What is graded
+
+Each unit's condition and action are compared with the true state of the fleet. Checked: real faults that are missed, benign units flagged as faults, wrong fault types, and wrong actions.
+
+You have 14400 seconds to complete this task. Do not cheat by using online solutions or hints specific to this task.

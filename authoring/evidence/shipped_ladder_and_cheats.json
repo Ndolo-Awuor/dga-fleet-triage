@@ -1,0 +1,83 @@
+{
+ "expert workflow (reference)": {
+  "misses": 0,
+  "false_alarms": 0,
+  "type_err": 0,
+  "act_err": 0,
+  "n_fault": 10,
+  "n": 24,
+  "passes": true
+ },
+ "expert without the outlier screen": {
+  "misses": 0,
+  "false_alarms": 2,
+  "type_err": 0,
+  "act_err": 2,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ },
+ "expert without the laboratory-step correction": {
+  "misses": 0,
+  "false_alarms": 3,
+  "type_err": 0,
+  "act_err": 4,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ },
+ "raw last-3-year slopes": {
+  "misses": 0,
+  "false_alarms": 3,
+  "type_err": 0,
+  "act_err": 3,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ },
+ "latest sample only (level screen + Duval-style zones)": {
+  "misses": 1,
+  "false_alarms": 3,
+  "type_err": 3,
+  "act_err": 7,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ },
+ "cheat: every unit benign / routine": {
+  "misses": 10,
+  "false_alarms": 0,
+  "type_err": 0,
+  "act_err": 10,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ },
+ "cheat: every unit thermal / investigate": {
+  "misses": 0,
+  "false_alarms": 14,
+  "type_err": 6,
+  "act_err": 18,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ },
+ "cheat: every unit arcing / remove_from_service": {
+  "misses": 0,
+  "false_alarms": 14,
+  "type_err": 7,
+  "act_err": 22,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ },
+ "cheat: random labels": {
+  "misses": 2,
+  "false_alarms": 9,
+  "type_err": 5,
+  "act_err": 18,
+  "n_fault": 10,
+  "n": 24,
+  "passes": false
+ }
+}

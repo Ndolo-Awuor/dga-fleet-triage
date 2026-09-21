@@ -65,7 +65,7 @@ def make_fleet(seed, n_units=24):
     ids = [f"T{i + 1:02d}" for i in range(n_units)]
 
     D_reg = {"North": float(r.uniform(2023.2, 2024.6)), "South": float(r.uniform(2023.2, 2024.6))}   # regional lab change (A -> B)
-    c_common = float(r.uniform(0.72, 0.88))                                   # old lab A reads lower than reference lab B
+    c_common = float(r.uniform(0.62, 0.80))                                   # old lab A reads lower than reference lab B
     lab_factor = {g: float(c_common * np.exp(r.normal(0, 0.07))) for g in GASES}  # A reports true * factor
 
     # oil type: stray-gassing units are type B; keep at least 3 non-stray type-B units so type B is not a shortcut
@@ -86,7 +86,7 @@ def make_fleet(seed, n_units=24):
     samples, units_rows, events_rows, truth = [], [], [], {}
     region = {u: ("North" if r.random() < 0.5 else "South") for u in ids}
     for u, k in zip(ids, kinds):
-        D = D_reg[region[u]]
+        D = float(np.clip(D_reg[region[u]] + r.normal(0, 0.30), 2022.9, 2024.9))   # staggered adoption per unit
         young_stray = (k == "stray" and r.random() < 0.3)
         tc = float(r.uniform(2011.0, 2012.6)) if young_stray else float(r.uniform(1990, 2010) if k != "stray" else r.uniform(1996, 2004))
         t0 = max(tc, T_START)
@@ -169,13 +169,16 @@ def make_fleet(seed, n_units=24):
             t += r.uniform(0.35, 0.65)
         ts.append(T_END - r.uniform(0.05, 0.4))
         ts = np.array(ts)
+        prev_bad = False
         for tsi in ts:
             val = np.array([np.interp(tsi, tg, c[:, j]) for j in range(7)])
             lab = "A" if tsi < D else "B"
             if lab == "A":
                 val = val * np.array([lab_factor[g] for g in GASES])
-            if r.random() < 0.05:
-                val = val * r.uniform(0.35, 0.7)                          # sampling error / gas loss
+            bad = (r.random() < 0.05) or (prev_bad and r.random() < 0.5)             # sampling errors often come in pairs
+            prev_bad = bad
+            if bad:
+                val = val * r.uniform(0.35, 0.7)                          # gas loss at the sampling visit
             val = val * np.exp(r.normal(0, 0.045, size=7)) + r.normal(0, 1.0, size=7) * np.array([1, 1, 1, 1, 0.3, 3, 20])
             val = np.maximum(np.round(val), 0)
             samples.append((u, to_date(tsi).isoformat(), lab, *[int(v) for v in val]))

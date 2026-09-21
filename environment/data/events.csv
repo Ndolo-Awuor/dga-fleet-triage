@@ -1,0 +1,11 @@
+unit,date,event,detail
+T07,2019-10-19,top_up,added_percent=7.7
+T08,2023-06-18,degassing,vacuum degassing
+T10,2020-08-24,degassing,vacuum degassing
+T10,2022-01-27,top_up,added_percent=10.7
+T11,2025-04-10,top_up,added_percent=14.3
+T14,2024-12-16,top_up,added_percent=12.6
+T16,2019-04-25,top_up,added_percent=10.0
+T19,2021-03-10,top_up,added_percent=7.6
+T22,2022-03-20,top_up,added_percent=15.1
+T24,2019-06-22,top_up,added_percent=12.7

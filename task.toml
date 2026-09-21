@@ -1,0 +1,45 @@
+schema_version = "1.4"
+
+artifacts = ["/app/diagnosis.json"]
+
+[task]
+name = "afterquery/dga-fleet-triage"
+description = "Diagnose a fleet of transformers from multi-year dissolved-gas histories, separating real developing faults from benign gassing and from laboratory, dilution and degassing artefacts, and assign an action to each unit."
+authors = [{ name = "Yvonne Awuor Ndolo", email = "ndolopj37@gmail.com" }]
+keywords = ["transformer-condition-monitoring", "dissolved-gas-analysis", "trend-analysis", "asset-health", "power-transformers"]
+
+[metadata]
+author_name = "Yvonne Awuor Ndolo"
+author_email = "ndolopj37@gmail.com"
+author_organization = "Independent Researcher"
+author_profile = "https://www.linkedin.com/in/yvonne-awuor-7aa7b7395/"
+conflicts_of_interest = "None"
+domain = "engineering-sciences"
+field = "electrical-engineering"
+subfield = "transformer condition monitoring (dissolved gas analysis)"
+category = "Science"
+subcategory = "Electrical & Computer Engineering"
+tags = ["dissolved-gas-analysis", "power-transformers", "condition-monitoring", "trend-analysis", "asset-health", "change-point-detection"]
+expert_time_estimate_hours = 4
+relevant_experience = "I studied Instrumentation and Control Engineering at Egerton University (BSc, 2019). During my attachment in the Network Management Division at Kenya Power and Lighting Company I took part in condition monitoring and electrical testing of network equipment, including insulation and oil testing, and in maintenance and repair of power transformers, circuit breakers and automatic recloser circuits. That was an attachment, so my exposure to transformer oil testing is practical but limited; I have not run a utility-scale dissolved-gas programme."
+difficulty_explanation = "The data are synthetic, made by a seeded generator I wrote and disclose here: 24 oil-filled transformers sampled about twice a year, with real developing faults (thermal, partial discharge, arcing), benign transformers whose stray gassing has levelled off at high gas levels, top-up dilution, vacuum degassing, sampling errors that come in pairs, and a change of laboratory that hit different units at different dates and reads consistently higher. Judging each unit by its latest sample flags the high-level benign units and gets fault types wrong; on 60 fresh generated fleets that approach never passed. Trend analysis is needed, and the trend itself is corrupted: the laboratory change sits inside the last three years, its date is not recorded, and it has to be found as a common jump across a region and corrected, dilution and degassing have to be handled by segment, and sampling errors have to be told apart from a real trend by a common drop in the stable gases. Plain robust slopes, or slopes that split records without correcting the step, pass about a quarter of fleets."
+solution_explanation = "I estimate one shared step size for the laboratory change, and each region's change date, by fitting a common jump on top of a separate trend for every unit and gas, then let each unit take its own date if that clearly lowers its residual. I drop samples where CO and CO2 both fall by the same factor against their neighbours, refit, and convert the older laboratory's readings to the newest laboratory's units. For each unit I split the record at top-ups and degassings, take the median of within-segment pairwise slopes over the last three years, and judge significance against a noise level that never falls below normal laboratory repeatability. Where a recent degassing leaves too few samples, I take the rate from the accumulated level since the degassing. The fault type comes from the gas pattern of the rates, and the action from the stated rate rule."
+verification_explanation = "The verifier reads /app/diagnosis.json, normalises key case and spacing, and requires every unit with an allowed condition and action. It compares each unit with the ground truth of the seeded generator, which is the generator's fault or benign source for that unit and the action computed from its true generation rates by the stated rule, not the output of any solver. Four checks must all pass for the reward to be 1: at most one real fault called benign, at most one benign unit flagged as a fault, at most one wrong fault type among the detected faults, and at most three wrong actions among the 24 units. The ground truth is not in the environment image, and the generated histories are not published anywhere, so the answers cannot be looked up. On 60 fresh generated fleets the expert workflow passes 46, the workflow without the outlier screen 36, without the laboratory-step correction 16, raw slopes 16, and the latest-sample method 0; the README has the ladder. The oracle scores 1 and the nop scores 0 on the real harness."
+
+[verifier]
+timeout_sec = 300.0
+environment_mode = "separate"
+
+[verifier.environment]
+network_mode = "no-network"
+
+[agent]
+timeout_sec = 14400.0
+
+[environment]
+build_timeout_sec = 600.0
+cpus = 2
+memory_mb = 4096
+storage_mb = 10240
+gpus = 0
+network_mode = "public"
