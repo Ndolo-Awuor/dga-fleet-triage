@@ -1,10 +1,3 @@
-<!--
-DRAFT OF THE FACTS ONLY. Rewrite this in your own words before submission (the platform screens
-instruction.md for AI-generated text), and keep it plain and direct: the last review failed this file for
-narrative and roleplay wording. Keep every fact accurate. Do NOT add hints about how to solve it. Delete this
-comment block before submitting.
--->
-
 # Transformer fleet diagnosis
 
 ## Context
