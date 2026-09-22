@@ -1,15 +1,13 @@
 unit,date,event,detail
-T01,2019-11-24,degassing,vacuum degassing
-T04,2025-03-23,top_up,added_percent=14.3
-T06,2023-03-05,top_up,added_percent=14.3
-T07,2019-07-09,top_up,added_percent=11.4
-T10,2025-01-30,top_up,added_percent=6.9
-T12,2023-10-31,top_up,added_percent=15.8
-T13,2023-12-10,top_up,added_percent=6.2
-T15,2022-05-25,top_up,added_percent=10.7
-T16,2021-03-02,degassing,vacuum degassing
-T17,2020-04-18,top_up,added_percent=10.1
-T17,2024-06-24,degassing,vacuum degassing
-T18,2022-01-05,top_up,added_percent=13.9
-T24,2023-09-02,degassing,vacuum degassing
-T24,2024-01-21,top_up,added_percent=7.3
+T04,2021-01-23,top_up,added_percent=9.4
+T06,2021-06-08,top_up,added_percent=9.7
+T09,2020-09-20,degassing,vacuum degassing
+T10,2024-10-20,top_up,added_percent=6.5
+T13,2021-06-04,top_up,added_percent=11.2
+T13,2024-12-25,degassing,vacuum degassing
+T17,2024-05-17,top_up,added_percent=6.8
+T19,2024-02-24,top_up,added_percent=7.9
+T21,2020-05-25,top_up,added_percent=10.6
+T22,2025-04-15,top_up,added_percent=9.8
+T24,2019-05-02,top_up,added_percent=13.4
+T24,2021-05-17,degassing,vacuum degassing

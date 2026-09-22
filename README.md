@@ -2,7 +2,7 @@
 
 Diagnose a fleet of 24 oil-filled transformers from multi-year dissolved-gas records: which units have a developing
 fault, of what kind, which are benign, and what action each needs. The records are **synthetic**, from a seeded
-generator (`authoring/provenance/gen_fleet.py`, shipped instance seed 151); every gas-generation figure is a plausible,
+generator (`authoring/provenance/gen_fleet.py`, shipped instance seed 145); every gas-generation figure is a plausible,
 disclosed choice and not data from any utility. The action rule is this task's own convention, stated in the data README.
 
 ## Difficulty
@@ -10,8 +10,8 @@ disclosed choice and not data from any utility. The action rule is this task's o
 The obvious approach is to read the latest sample of each transformer: elevated gas levels, ratio methods, a
 Duval-style zone. That fails here for a real reason. Benign units with oil-related ("stray") gassing sit at high but
 stable levels and get flagged, real faults of different types get the wrong label, and the generation rate that decides
-the action is not visible in a single sample. On the shipped instance it flags 3 benign units, gets 1 fault type wrong
-and makes 5 wrong actions; on 60 fresh generated fleets it never passed the gate.
+the action is not visible in a single sample. On the shipped instance it flags 3 benign units, gets 3 fault types wrong
+and makes 6 wrong actions; on 60 fresh generated fleets it never passed the gate.
 
 The generation rate has to come from the trends, and the trends are corrupted in ways a practitioner must recognise:
 
@@ -19,6 +19,10 @@ The generation rate has to come from the trends, and the trends are corrupted in
   than the previous one, hit different units on different dates, and the dates are not recorded. It appears as a
   common jump across a region's units and has to be found and corrected. Left in, it makes every high-level unit look like
   it is generating gas.
+* **Each unit's own CO/CO2 wander.** CO and CO2 (the gases used to spot the laboratory change) also wander slowly and
+  independently in every unit, unrelated to the lab or to any fault, at a size comparable to the lab step itself. Reading
+  the step off one unit's own record is unreliable; only pooling many units of a region separates the shared step from
+  each unit's private wander.
 * **Top-ups and degassings** (listed, but their effect must be handled): dilution and reset change concentrations
   without changing generation. After a recent degassing the accumulated level, not a slope, carries the rate.
 * **Sampling errors that come in pairs** (gas lost at the sampling visit) defeat a simple median. They show as a common
@@ -79,25 +83,25 @@ have not been checked against a utility's practice.
 
 | route | passes | mean misses | mean false alarms | mean action errors |
 |---|---|---|---|---|
-| expert workflow (reference) | 46 / 60 | 0.57 | 0.55 | 1.40 |
-| without the outlier screen | 36 / 60 | 0.88 | 1.05 | 2.38 |
-| without the laboratory-step correction | 16 / 60 | 0.37 | 2.63 | 3.97 |
-| raw last-3-year slopes | 16 / 60 | 0.50 | 1.95 | 3.47 |
-| latest sample only (level screen + Duval-style zones) | 0 / 60 | 0.33 | 2.78 | 5.62 |
+| expert workflow (reference) | 46 / 60 | 0.52 | 0.75 | 1.65 |
+| without the outlier screen | 29 / 60 | 0.95 | 1.30 | 2.75 |
+| without the laboratory-step correction | 8 / 60 | 0.35 | 2.78 | 4.20 |
+| raw last-3-year slopes | 14 / 60 | 0.60 | 1.97 | 3.57 |
+| latest sample only (level screen + Duval-style zones) | 0 / 60 | 0.52 | 2.88 | 5.95 |
 
-Shipped instance (seed 151):
+Shipped instance (seed 145):
 
 | route | missed | false alarms | wrong type | wrong action | passes |
 |---|---|---|---|---|---|
 | expert workflow (reference) | 0 | 0 | 0 | 1 | yes |
-| without the outlier screen | 0 | 10 | 0 | 13 | no |
-| without the laboratory-step correction | 0 | 8 | 0 | 11 | no |
-| raw last-3-year slopes | 1 | 2 | 0 | 6 | no |
-| latest sample only | 0 | 3 | 1 | 5 | no |
+| without the outlier screen | 3 | 1 | 0 | 4 | no |
+| without the laboratory-step correction | 0 | 4 | 0 | 6 | no |
+| raw last-3-year slopes | 0 | 4 | 0 | 5 | no |
+| latest sample only | 0 | 3 | 3 | 6 | no |
 | cheat: every unit benign | 9 | 0 | 0 | 9 | no |
-| cheat: every unit thermal / investigate | 0 | 15 | 5 | 18 | no |
-| cheat: every unit arcing / remove_from_service | 0 | 15 | 6 | 22 | no |
-| cheat: random labels | 3 | 13 | 5 | 17 | no |
+| cheat: every unit thermal / investigate | 0 | 15 | 5 | 20 | no |
+| cheat: every unit arcing / remove_from_service | 0 | 15 | 7 | 22 | no |
+| cheat: random labels | 1 | 11 | 2 | 15 | no |
 
 The oracle scores 1 and the nop scores 0 on the real harness. Not done: agent trials (the platform's probes are the first
 measurement) and an independent second solver.

@@ -9,28 +9,28 @@
   "passes": true
  },
  "expert without the outlier screen": {
-  "misses": 0,
-  "false_alarms": 10,
+  "misses": 3,
+  "false_alarms": 1,
   "type_err": 0,
-  "act_err": 13,
+  "act_err": 4,
   "n_fault": 9,
   "n": 24,
   "passes": false
  },
  "expert without the laboratory-step correction": {
   "misses": 0,
-  "false_alarms": 8,
+  "false_alarms": 4,
   "type_err": 0,
-  "act_err": 11,
+  "act_err": 6,
   "n_fault": 9,
   "n": 24,
   "passes": false
  },
  "raw last-3-year slopes": {
-  "misses": 1,
-  "false_alarms": 2,
+  "misses": 0,
+  "false_alarms": 4,
   "type_err": 0,
-  "act_err": 6,
+  "act_err": 5,
   "n_fault": 9,
   "n": 24,
   "passes": false
@@ -38,8 +38,8 @@
  "latest sample only (level screen + Duval-style zones)": {
   "misses": 0,
   "false_alarms": 3,
-  "type_err": 1,
-  "act_err": 5,
+  "type_err": 3,
+  "act_err": 6,
   "n_fault": 9,
   "n": 24,
   "passes": false
@@ -57,7 +57,7 @@
   "misses": 0,
   "false_alarms": 15,
   "type_err": 5,
-  "act_err": 18,
+  "act_err": 20,
   "n_fault": 9,
   "n": 24,
   "passes": false
@@ -65,17 +65,17 @@
  "cheat: every unit arcing / remove_from_service": {
   "misses": 0,
   "false_alarms": 15,
-  "type_err": 6,
+  "type_err": 7,
   "act_err": 22,
   "n_fault": 9,
   "n": 24,
   "passes": false
  },
  "cheat: random labels": {
-  "misses": 3,
-  "false_alarms": 13,
-  "type_err": 5,
-  "act_err": 17,
+  "misses": 1,
+  "false_alarms": 11,
+  "type_err": 2,
+  "act_err": 15,
   "n_fault": 9,
   "n": 24,
   "passes": false

@@ -20,6 +20,7 @@ import numpy as np
 GASES = ["H2", "CH4", "C2H6", "C2H4", "C2H2", "CO", "CO2"]
 T_START, T_END = 2012.0, 2026.0
 STEP = 1.0 / 24.0
+SIGMA_WALK = 0.12                          # SD of each unit's own CO/CO2 wander, accumulated per sqrt(year)
 
 # share of the combustible generation rate carried by H2, CH4, C2H6, C2H4, C2H2
 FRACS = {
@@ -170,8 +171,13 @@ def make_fleet(seed, n_units=24):
         ts.append(T_END - r.uniform(0.05, 0.4))
         ts = np.array(ts)
         prev_bad = False
+        drift = 0.0; t_prev = None                    # slow unit-own wander in CO/CO2, unrelated to the lab or any fault
         for tsi in ts:
+            if t_prev is not None:
+                drift += float(r.normal(0, SIGMA_WALK * np.sqrt(max(tsi - t_prev, 1e-6))))
+            t_prev = tsi
             val = np.array([np.interp(tsi, tg, c[:, j]) for j in range(7)])
+            val[5:7] *= np.exp(drift)
             lab = "A" if tsi < D else "B"
             if lab == "A":
                 val = val * np.array([lab_factor[g] for g in GASES])
