@@ -2,7 +2,7 @@
 
 Diagnose a fleet of 24 oil-filled transformers from multi-year dissolved-gas records: which units have a developing
 fault, of what kind, which are benign, and what action each needs. The records are **synthetic**, from a seeded
-generator (`authoring/provenance/gen_fleet.py`, shipped instance seed 110); every gas-generation figure is a plausible,
+generator (`authoring/provenance/gen_fleet.py`, shipped instance seed 151); every gas-generation figure is a plausible,
 disclosed choice and not data from any utility. The action rule is this task's own convention, stated in the data README.
 
 ## Difficulty
@@ -10,8 +10,8 @@ disclosed choice and not data from any utility. The action rule is this task's o
 The obvious approach is to read the latest sample of each transformer: elevated gas levels, ratio methods, a
 Duval-style zone. That fails here for a real reason. Benign units with oil-related ("stray") gassing sit at high but
 stable levels and get flagged, real faults of different types get the wrong label, and the generation rate that decides
-the action is not visible in a single sample. On the shipped instance it flags 3 benign units, gets 3 fault types wrong
-and makes 7 wrong actions; on 60 fresh generated fleets it never passed the gate.
+the action is not visible in a single sample. On the shipped instance it flags 3 benign units, gets 1 fault type wrong
+and makes 5 wrong actions; on 60 fresh generated fleets it never passed the gate.
 
 The generation rate has to come from the trends, and the trends are corrupted in ways a practitioner must recognise:
 
@@ -51,7 +51,7 @@ Other valid strategies exist and the verifier does not require this one.
 allowed values. It compares with `tests/truth.json`, the seeded generator's fault or benign source for each unit and the
 action computed from its true generation rates by the stated rule (not any solver's output). Four checks must all pass:
 
-| check | limit (of 24 units, 10 real faults) |
+| check | limit (of 24 units, 9 real faults) |
 |---|---|
 | real faults called benign | at most 1 |
 | benign units flagged as faults | at most 1 |
@@ -64,7 +64,8 @@ verifier image, and the histories are not published, so the answers cannot be lo
 
 **Calibration.** The generator and the reference were developed on seeds 1-40 (thresholds tuned there), then tested on 60
 fresh fleets, seeds 101-160, never used for tuning. The shipped instance was chosen from those fresh seeds because the
-reference is perfect on it and the weaker routes fail it. Results are in `authoring/evidence/`.
+reference passes it cleanly (one wrong action, not a perfect score) while every weaker route fails it outright. Results
+are in `authoring/evidence/`.
 
 **Disclosures.** (1) The gates were set after seeing calibration results. (2) The instance was selected. (3) The
 reference passes 46 of 60 fresh fleets (77 %), not all; its misses are marginal false alarms or low-rate faults. (4) The
@@ -84,19 +85,19 @@ have not been checked against a utility's practice.
 | raw last-3-year slopes | 16 / 60 | 0.50 | 1.95 | 3.47 |
 | latest sample only (level screen + Duval-style zones) | 0 / 60 | 0.33 | 2.78 | 5.62 |
 
-Shipped instance (seed 110):
+Shipped instance (seed 151):
 
 | route | missed | false alarms | wrong type | wrong action | passes |
 |---|---|---|---|---|---|
-| expert workflow (reference) | 0 | 0 | 0 | 0 | yes |
-| without the outlier screen | 0 | 2 | 0 | 2 | no |
-| without the laboratory-step correction | 0 | 3 | 0 | 4 | no |
-| raw last-3-year slopes | 0 | 3 | 0 | 3 | no |
-| latest sample only | 1 | 3 | 3 | 7 | no |
-| cheat: every unit benign | 10 | 0 | 0 | 10 | no |
-| cheat: every unit thermal / investigate | 0 | 14 | 6 | 18 | no |
-| cheat: every unit arcing / remove_from_service | 0 | 14 | 7 | 22 | no |
-| cheat: random labels | 2 | 9 | 5 | 18 | no |
+| expert workflow (reference) | 0 | 0 | 0 | 1 | yes |
+| without the outlier screen | 0 | 10 | 0 | 13 | no |
+| without the laboratory-step correction | 0 | 8 | 0 | 11 | no |
+| raw last-3-year slopes | 1 | 2 | 0 | 6 | no |
+| latest sample only | 0 | 3 | 1 | 5 | no |
+| cheat: every unit benign | 9 | 0 | 0 | 9 | no |
+| cheat: every unit thermal / investigate | 0 | 15 | 5 | 18 | no |
+| cheat: every unit arcing / remove_from_service | 0 | 15 | 6 | 22 | no |
+| cheat: random labels | 3 | 13 | 5 | 17 | no |
 
 The oracle scores 1 and the nop scores 0 on the real harness. Not done: agent trials (the platform's probes are the first
 measurement) and an independent second solver.

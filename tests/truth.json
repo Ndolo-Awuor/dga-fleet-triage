@@ -1,31 +1,31 @@
 {
  "T01": {
-  "condition": "arcing",
+  "condition": "partial_discharge",
   "action": "remove_from_service",
-  "rate_sum": 51.94,
-  "c2h2_rate": 8.829,
-  "kind": "arcing"
+  "rate_sum": 393.77,
+  "c2h2_rate": 0.0,
+  "kind": "partial_discharge"
  },
  "T02": {
-  "condition": "benign",
-  "action": "routine",
-  "rate_sum": 0.0,
-  "c2h2_rate": 0.0,
-  "kind": "stray"
+  "condition": "arcing",
+  "action": "investigate",
+  "rate_sum": 19.38,
+  "c2h2_rate": 3.294,
+  "kind": "arcing"
  },
  "T03": {
+  "condition": "arcing",
+  "action": "investigate",
+  "rate_sum": 15.34,
+  "c2h2_rate": 2.608,
+  "kind": "arcing"
+ },
+ "T04": {
   "condition": "benign",
   "action": "routine",
   "rate_sum": 0.0,
   "c2h2_rate": 0.0,
   "kind": "normal"
- },
- "T04": {
-  "condition": "thermal",
-  "action": "investigate",
-  "rate_sum": 93.02,
-  "c2h2_rate": 0.093,
-  "kind": "thermal"
  },
  "T05": {
   "condition": "benign",
@@ -39,7 +39,7 @@
   "action": "routine",
   "rate_sum": 0.0,
   "c2h2_rate": 0.0,
-  "kind": "stray"
+  "kind": "normal"
  },
  "T07": {
   "condition": "benign",
@@ -49,88 +49,88 @@
   "kind": "normal"
  },
  "T08": {
-  "condition": "partial_discharge",
-  "action": "increase_sampling",
-  "rate_sum": 33.99,
+  "condition": "benign",
+  "action": "routine",
+  "rate_sum": 0.0,
   "c2h2_rate": 0.0,
-  "kind": "partial_discharge"
+  "kind": "normal"
  },
  "T09": {
-  "condition": "partial_discharge",
-  "action": "investigate",
-  "rate_sum": 91.42,
+  "condition": "benign",
+  "action": "routine",
+  "rate_sum": 0.0,
   "c2h2_rate": 0.0,
-  "kind": "partial_discharge"
+  "kind": "normal"
  },
  "T10": {
-  "condition": "partial_discharge",
-  "action": "investigate",
-  "rate_sum": 91.92,
+  "condition": "benign",
+  "action": "routine",
+  "rate_sum": 0.0,
   "c2h2_rate": 0.0,
-  "kind": "partial_discharge"
+  "kind": "normal"
  },
  "T11": {
   "condition": "benign",
   "action": "routine",
   "rate_sum": 0.0,
   "c2h2_rate": 0.0,
-  "kind": "normal"
+  "kind": "stray"
  },
  "T12": {
-  "condition": "thermal",
-  "action": "investigate",
-  "rate_sum": 125.33,
-  "c2h2_rate": 0.125,
-  "kind": "thermal"
- },
- "T13": {
-  "condition": "arcing",
-  "action": "remove_from_service",
-  "rate_sum": 55.89,
-  "c2h2_rate": 9.501,
-  "kind": "arcing"
- },
- "T14": {
-  "condition": "arcing",
-  "action": "investigate",
-  "rate_sum": 8.46,
-  "c2h2_rate": 1.439,
-  "kind": "arcing"
- },
- "T15": {
   "condition": "benign",
   "action": "routine",
   "rate_sum": 0.0,
   "c2h2_rate": 0.0,
   "kind": "stray"
  },
- "T16": {
+ "T13": {
   "condition": "benign",
   "action": "routine",
   "rate_sum": 0.0,
   "c2h2_rate": 0.0,
   "kind": "normal"
+ },
+ "T14": {
+  "condition": "thermal",
+  "action": "increase_sampling",
+  "rate_sum": 39.42,
+  "c2h2_rate": 0.039,
+  "kind": "thermal"
+ },
+ "T15": {
+  "condition": "benign",
+  "action": "routine",
+  "rate_sum": 0.0,
+  "c2h2_rate": 0.0,
+  "kind": "normal"
+ },
+ "T16": {
+  "condition": "thermal",
+  "action": "investigate",
+  "rate_sum": 111.31,
+  "c2h2_rate": 0.111,
+  "kind": "thermal"
  },
  "T17": {
-  "condition": "benign",
-  "action": "routine",
-  "rate_sum": 0.0,
-  "c2h2_rate": 0.0,
-  "kind": "normal"
+  "condition": "thermal",
+  "action": "remove_from_service",
+  "rate_sum": 504.57,
+  "c2h2_rate": 0.505,
+  "kind": "thermal"
  },
  "T18": {
-  "condition": "benign",
-  "action": "routine",
-  "rate_sum": 0.0,
-  "c2h2_rate": 0.0,
-  "kind": "normal"
+  "condition": "thermal",
+  "action": "investigate",
+  "rate_sum": 148.03,
+  "c2h2_rate": 0.444,
+  "kind": "thermal"
  },
  "T19": {
-  "condition": "benign",
-  "action": "routine",
-  "rate_sum": 0.0,
-  "c2h2_rate": 0.0,
-  "kind": "normal"
+  "condition": "arcing",
+  "action": "investigate",
+  "rate_sum": 24.66,
+  "c2h2_rate": 4.193,
+  "kind": "arcing"
  },
  "T20": {
   "condition": "benign",
@@ -144,27 +144,27 @@
   "action": "routine",
   "rate_sum": 0.0,
   "c2h2_rate": 0.0,
-  "kind": "stray"
+  "kind": "normal"
  },
  "T22": {
-  "condition": "thermal",
-  "action": "increase_sampling",
-  "rate_sum": 37.32,
-  "c2h2_rate": 0.037,
-  "kind": "thermal"
+  "condition": "benign",
+  "action": "routine",
+  "rate_sum": 0.0,
+  "c2h2_rate": 0.0,
+  "kind": "stray"
  },
  "T23": {
+  "condition": "partial_discharge",
+  "action": "investigate",
+  "rate_sum": 114.84,
+  "c2h2_rate": 0.0,
+  "kind": "partial_discharge"
+ },
+ "T24": {
   "condition": "benign",
   "action": "routine",
   "rate_sum": 0.0,
   "c2h2_rate": 0.0,
   "kind": "normal"
- },
- "T24": {
-  "condition": "thermal",
-  "action": "investigate",
-  "rate_sum": 135.11,
-  "c2h2_rate": 0.135,
-  "kind": "thermal"
  }
 }
