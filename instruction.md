@@ -2,7 +2,7 @@
 
 ## Context
 
-Multi-year dissolved-gas records for a fleet of 24 oil-filled transformers. Some units have a developing fault. The laboratory changed during the record, and there were oil top-ups and degassings.
+Multi-year dissolved-gas records for a fleet of 24 oil-filled transformers. Some units have a developing fault.
 
 ## Inputs
 

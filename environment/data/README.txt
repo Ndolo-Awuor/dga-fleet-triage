@@ -16,10 +16,8 @@ events.csv   unit, date, event, detail
 
 Laboratories
 ------------
-The samples were analysed by contract laboratories. The laboratory changed during the record and different laboratories
-can read differently. The units of a region did not all change on the same day, and the changeover dates are not recorded.
-Take the most recent laboratory's figures as correct: express every rate below in the units of the latest laboratory.
-Some samples are also unrepresentative (for example, gas lost at the sampling visit).
+Samples were analysed by contract laboratories over the life of the record. Express every rate below in the
+measurement scale used by each unit's most recent samples.
 
 What to produce
 ---------------
